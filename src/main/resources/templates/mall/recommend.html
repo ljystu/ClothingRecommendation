@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>recommend</title>
+    <link rel="stylesheet" th:href="@{/mall/styles/recommend.css}">
+    <!--Favicon-->
+    <link rel="icon" th:href="@{/assets/img/favicon.jpg}" type="image/jpg"/>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/assets/css/bootstrap.min.css}" rel="stylesheet">
+    <!-- Font Awesome CSS-->
+    <link th:href="@{/assets/css/font-awesome.min.css}" rel="stylesheet">
+    <!-- Line Awesome CSS -->
+    <link th:href="@{/assets/css/line-awesome.min.css}" rel="stylesheet">
+    <!-- Animate CSS-->
+    <link th:href="@{/assets/css/animate.css}" rel="stylesheet">
+    <!-- Bar Filler CSS -->
+    <link th:href="@{/assets/css/barfiller.css}" rel="stylesheet">
+    <!-- Magnific Popup Video -->
+    <link th:href="@{/assets/css/magnific-popup.css}" rel="stylesheet">
+    <!-- Flaticon CSS -->
+    <link th:href="@{/assets/css/flaticon.css}" rel="stylesheet">
+    <!-- Owl Carousel CSS -->
+    <link th:href="@{/assets/css/owl.carousel.min.css}" rel="stylesheet">
+    <!-- Style CSS -->
+    <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+    <!-- Responsive CSS -->
+    <link th:href="@{/assets/css/responsive.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/mall/css/buttons.css}">
+    <!-- jquery -->
+    <script th:src="@{/assets/js/jquery-1.12.4.min.js}"></script>
+
+</head>
+
+<body>
+
+<!-- Pre-Loader -->
+<div id="loader">
+    <div class="loading">
+        <div></div>
+    </div>
+</div>
+
+<!-- Header Area -->
+
+<!-- Header Area -->
+
+<div id="style-2" class="header-area absolute-header">
+    <div class="sticky-area">
+        <div class="navigation">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="logo">
+                            <a href="index.html"><img src="assets/img/dhu.png" alt="dhu-logo"></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="main-menu">
+                            <nav class="navbar navbar-expand-lg">
+                                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                        aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon"></span>
+                                    <span class="navbar-toggler-icon"></span>
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+
+                                <div class="collapse navbar-collapse justify-content-center"
+                                     id="navbarSupportedContent">
+                                    <ul class="navbar-nav m-auto">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" href="index.html">Home
+                                                <span class="sub-nav-toggler">
+ 													</span>
+                                            </a>
+                                        </li>
+
+                                        <th:block th:if="${session.RSUser==null}">
+                                            <li class="nav-item">
+                                                <a class="nav-link" th:href="@{'/searchall?keywords=&orderBy='}">products
+                                                    <span class="sub-nav-toggler">
+ 													</span>
+                                                </a>
+                                            </li>
+                                        </th:block>
+
+                                        <th:block th:if="${session.RSUser!=null}">
+                                            <li class="nav-item">
+                                                <a class="nav-link"
+                                                   th:href="@{'/searchall?RSuser='+${session.RSUser.loginName}+'&keywords=&orderBy='}">products
+                                                    <span class="sub-nav-toggler">
+ 													</span>
+                                                </a>
+                                            </li>
+                                            <div id="wode" th:hidden="true" th:text="${session.RSUser.loginName}"></div>
+                                            <li class="nav-item">
+                                                <a class="nav-link active" th:text="${session.RSUser.loginName}">
+                                        <span class="sub-nav-toggler">
+ 													</span>
+                                                </a>
+                                                <ul class="sub-menu">
+                                                    <li><a th:href="@{/personal}">personal</a></li>
+                                                    <li>
+                                                        <a th:href="@{'/recommend?RSuser='+${session.RSUser.loginName}+'&orderBy=re'}">provide
+                                                            information</a></li>
+                                                    <li><a th:href="@{/logout}">logout</a></li>
+                                                </ul>
+                                            </li>
+                                        </th:block>
+                                        <th:block th:if="${session.RSUser==null}">
+                                            <li class="nav-item" style="margin-top:15px">
+                                                <input style="color: white; border:none" type="text" id="keyword"
+                                                       placeholder="Your keywords">
+                                            </li>
+                                            <li class="nav-item">
+                                                <div class="main-btn header-btn " th:onclick="search('')">Search</div>
+                                            </li>
+                                        </th:block>
+                                    </ul>
+
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                    <th:block th:if="${session.RSUser==null}">
+                        <div class="col-lg-3 text-right">
+                            <div class="header-right-content">
+                                <a class="header-btn main-btn" th:href="@{/login}">login</a>
+                            </div>
+                        </div>
+                        <!--                        <div class="col-lg-2 text-right">-->
+                        <!--                            <div class="header-right-content">-->
+                        <!--                                <a class="header-btn main-btn" th:href="@{/register}">register</a>-->
+                        <!--                            </div>-->
+                        <!--                        </div>-->
+                    </th:block>
+                    <th:block th:if="${session.RSUser!=null}">
+                        <div class="col-lg-2 text-right">
+                            <div class="nav-item" style="margin-top:15px">
+                                <input style="color: white; border:none" type="text" id="keywords"
+                                       placeholder="Your keywords">
+                            </div>
+                        </div>
+                        <div class="col-lg-1 text-right">
+                            <div class="nav-item">
+                                <div class="main-btn header-btn"
+                                     th:onclick="searchNull([[${session.RSUser.loginName}]])">Search
+                                </div>
+                                <!--                                            <button class="main-btn" onclick="search()">Search</button>-->
+                            </div>
+                        </div>
+                    </th:block>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Breadcroumb Area -->
+
+<div class="breadcroumb-area bread-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcroumb-title text-center">
+                    <h1>Give us your ratings on some products</h1>
+                    <h5><a href="index.html">Home</a> / Search Keywords</h5>
+                    <h5>
+                        请您对以下任意一件产品做出评价 便于我们优化对您的商品推荐策略<br>
+                        将鼠标放置在对应商品上即可进行评分</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--<div class="row">-->
+<!--    <div class="col-lg-12 col-md-12 col-sm-12 col-12" style="text-align: center;margin: 20px 0;">-->
+
+<!--        <b>请您对以下任意一件产品做出评价 便于我们优化对您的商品推荐策略<br>-->
+<!--            将鼠标放置在对应商品上即可进行评分</b>-->
+
+<!--    </div>-->
+<!--</div>-->
+<!-- Team Area-->
+
+<div class="team-area  pad-top-20 pad-bot-20">
+    <div class="container">
+        <div class="row">
+            <!--            <div class="col-lg-4 col-md-6 col-sm-6 col-12"></div>-->
+            <th:block th:if="${#lists.isEmpty(pageResult.list)}">
+                <img style="margin-top: 16px;padding: 16px 20px;" th:src="@{/mall/image/null-content.png}">
+            </th:block>
+            <th:block th:unless="${#lists.isEmpty(pageResult.list)}">
+                <th:block th:each="goods : ${pageResult.list}">
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                        <div class="single-team-member">
+                            <div align="center" class="team-member-bg">
+                                <img th:src="@{${goods.goodsCoverImg}}" th:alt="${goods.goodsName}">
+                                <div class="team-content">
+                                    <div class="team-title">
+                                        <a th:href="@{${goods.link}}" target="_blank" th:text="${goods.goodsName}">James
+                                            Cameron</a>
+                                    </div>
+                                    <div class="team-subtitle">
+                                        <p th:text="${goods.sellingPrice}"></p>
+                                        <p th:text="${goods.stars}+'/5.0'+'⭐ '+${goods.reviewnums}"></p>
+                                    </div>
+                                </div>
+                                <div class="team-social">
+                                    <ul>
+                                        <li>
+                                            <a th:href="@{'/survey?goodsId='+${goods.goodsId}+'&score=1'+'&user='+${session.RSUser.loginName}+'&page=' + ${pageResult.currPage+1}+'&orderBy='+${orderBy==null?'re':orderBy}}">1</a>
+                                        </li>
+                                        <li>
+                                            <a th:href="@{'/survey?goodsId='+${goods.goodsId}+'&score=2'+'&user='+${session.RSUser.loginName}+'&page=' + ${pageResult.currPage+1}+'&orderBy='+${orderBy==null?'re':orderBy}}">2</a>
+                                        </li>
+                                        <li>
+                                            <a th:href="@{'/survey?goodsId='+${goods.goodsId}+'&score=3'+'&user='+${session.RSUser.loginName}+'&page=' + ${pageResult.currPage+1}+'&orderBy='+${orderBy==null?'re':orderBy}}">3</a>
+                                        </li>
+                                        <li>
+                                            <a th:href="@{'/survey?goodsId='+${goods.goodsId}+'&score=4'+'&user='+${session.RSUser.loginName}+'&page=' + ${pageResult.currPage+1}+'&orderBy='+${orderBy==null?'re':orderBy}}">4</a>
+                                        </li>
+                                        <li>
+                                            <a th:href="@{'/survey?goodsId='+${goods.goodsId}+'&score=5'+'&user='+${session.RSUser.loginName}+'&page=' + ${pageResult.currPage+1}+'&orderBy='+${orderBy==null?'re':orderBy}}">5</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </th:block>
+            </th:block>
+            <!--            <div class="col-lg-4 col-md-6 col-sm-6 col-12"></div>-->
+        </div>
+    </div>
+</div>
+
+<!--<div class="classify">-->
+<!--    <div class="category">-->
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-12" style="text-align: center;margin: 10px 0;">
+        <div class="mybutton">
+            <span class="button-wrap">
+            &nbsp;<a class="button-pill" th:href="@{/index}"
+                     id="cancelRecommend">返回首页
+        </a>&nbsp;</span>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6 col-12" style="text-align: center;margin: 10px 0;">
+        <div class="mybutton">
+            <a href="##" th:hidden="true" class="active" th:text="${pageResult.currPage}">1</a>
+            <th:block th:if="${pageResult.currPage+1<=pageResult.totalPage}">
+                 <span class="button-wrap"><a
+                         class="button-pill"
+                         th:href="@{'/recommend?RSuser='+${session.RSUser.loginName}+'&keyword='+${keyword==null?'':keyword}+'&page=' + ${pageResult.currPage+1}+'&orderBy='+${orderBy==null?'re':orderBy}}"
+                         th:text="换一换"></a>
+                 </span></th:block>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- clients Area-->
+<div class="clients-area gray-bg section-padding">
+    <div class="container">
+        <div class="row">
+            <div id="clients-slider" class="clients-slider owl-carousel">
+                <div class="item-clients-img">
+                    <img src="assets/img/clients/1.png" class="img-fluid" alt="clients-1">
+                </div>
+                <div class="item-clients-img">
+                    <img src="assets/img/clients/2.png" class="img-fluid" alt="clients-2">
+                </div>
+                <div class="item-clients-img">
+                    <img src="assets/img/clients/3.png" class="img-fluid" alt="clients-3">
+                </div>
+                <div class="item-clients-img">
+                    <img src="assets/img/clients/4.png" class="img-fluid" alt="clients-4">
+                </div>
+                <div class="item-clients-img">
+                    <img src="assets/img/clients/5.png" class="img-fluid" alt="clients-5">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer Area -->
+
+<footer class="footer-area">
+    <div class="container">
+        <div class="footer-up">
+            <div class="row">
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <div class="logo">
+                        <a href="index.html"><img src="assets/img/dhu.png" alt="dhu-logo"></a>
+                        <!--If you use text logo instead of img logo-->
+                        <!--<a class="navbar-brand" href="index.html"><b>ARCHI</b>PIX</a>-->
+                    </div>
+                    <p> This is a project demo from Donghua university</p>
+                </div>
+                <div class="col-lg-6 col-md-6 com-sm-12">
+                    <h6>Useful Links</h6>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <ul>
+                                <li>
+                                    <a th:href="@{/login}">登录</a>
+                                    <a th:href="@{/register}">注册</a>
+
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-6">
+                            <ul>
+                                <li>
+<!--                                    <a href="#">个人中心</a>-->
+                                    <a th:href="@{/admin}">后台</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 ">
+                    <div class="subscribe-form">
+                        <h6>Search</h6>
+                        <input type="text" placeholder="Your keywords" id="keywordmy">
+                        <th:block th:if="${session.RSUser!=null}">
+                            <button class="main-btn" th:onclick="searchBottom([[${session.RSUser.loginName}]])">Search
+                            </button>
+                        </th:block>
+                        <th:block th:if="${session.RSUser==null}">
+                            <button class="main-btn" th:onclick="searchBottom('')">Search</button>
+                        </th:block>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div class="footer-bottom">
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <p class="copyright-line">Copyright &copy; 2021.Company name All rights reserved.<a target="_blank"
+                                                                                                    href="https://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a>
+                </p>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <p class="privacy"></p>
+            </div>
+        </div>
+        <a style="color: #9A9A9A" href="http://beian.miit.gov.cn/">沪ICP备2021010040号</a>
+    </div>
+</div>
+
+<!-- Scroll Top Area -->
+<a href="#top" class="go-top"><i class="las la-angle-up"></i></a>
+
+
+<!-- Popper JS -->
+<script th:src="@{/assets/js/popper.min.js}"></script>
+<!-- Bootstrap JS -->
+<script th:src="@{/assets/js/bootstrap.min.js}"></script>
+<!-- Wow JS -->
+<script th:src="@{/assets/js/wow.min.js}"></script>
+<!-- Owl Carousel JS -->
+<script th:src="@{/assets/js/owl.carousel.min.js}"></script>
+<!-- Isotope JS -->
+<script th:src="@{/assets/js/isotope-3.0.6-min.js}"></script>
+<!-- Way Points JS -->
+<script th:src="@{/assets/js/jquery.waypoints.min.js}"></script>
+<!-- Counter Up JS -->
+<script th:src="@{/assets/js/jquery.counterup.min.js}"></script>
+<!-- Magnific Popup JS -->
+<script th:src="@{/assets/js/magnific-popup.min.js}"></script>
+<!-- Sticky JS -->
+<script th:src="@{/assets/js/jquery.sticky.js}"></script>
+<!-- Progress Bar JS -->
+<script th:src="@{/assets/js/jquery.barfiller.js}"></script>
+<!-- Main JS -->
+<script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/mall/js/search.js}" type="text/javascript"></script>
+
+</body>
+
+</html>

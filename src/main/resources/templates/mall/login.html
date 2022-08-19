@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>用户| Log in</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" th:href="@{/admin/dist/img/favicon.ico}"/>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" th:href="@{/admin/dist/css/font-awesome.min.css}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" th:href="@{/admin/dist/css/ionicons.min.css}">
+    <!-- Theme style -->
+    <link rel="stylesheet" th:href="@{/admin/dist/css/adminlte.min.css}">
+    <link rel="stylesheet" th:href="@{../mallCN/css/common.css}">
+    <link rel="stylesheet" th:href="@{../mallCN/styles/login.css}">
+    <link rel="stylesheet" th:href="@{../mallCN/styles/header.css}">
+    <link rel="stylesheet" th:href="@{/admin/plugins/sweetalert/sweetalert.css}"/>
+    <style>
+        canvas {
+            display: block;
+            vertical-align: bottom;
+        }
+
+        #particles {
+            background-color: #F7FAFC;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="hold-transition login-page">
+<!-- Pre-Loader -->
+<div id="loader">
+    <div class="loading">
+        <div></div>
+    </div>
+</div>
+<div id="particles">
+</div>
+<div class="login-box">
+    <div class="login-logo" style="color: #1b4cae;">
+        <img th:src="@{/mall/image/mall-user.png}" style="    height: 58px;float: left;margin-left: 10px;">
+        <h1>用户登录</h1>
+    </div>
+    <div class="card">
+        <div class="card-body login-card-body">
+            <div class="login-box-msg">会员登录</div>
+            <div class="login-box-msg">您还不是我们的会员？<a href="register.html" target="_self">立即注册</a></div>
+            <form id="loginForm" onsubmit="return false;" action="##">
+                <div th:if="${not #strings.isEmpty(session.errorMsg)}" class="form-group">
+                    <div class="alert alert-danger" th:text="${session.errorMsg}"></div>
+                </div>
+                <div class="form-group has-feedback">
+                    <span class="fa fa-user form-control-feedback"></span>
+                    <input type="text" id="loginName" name="loginName" class="form-control" placeholder="请输入账号"
+                           required="true">
+                </div>
+                <div class="form-group has-feedback">
+                    <span class="fa fa-lock form-control-feedback"></span>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="请输入密码"
+                           required="true">
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <input type="text" id="verifyCode" name="verifyCode" class="form-control verify-code"
+                               placeholder="请输入验证码" required="true">
+                    </div>
+                    <div class="col-6">
+                        <img alt="单击图片刷新！" class="pointer" th:src="@{/common/mall/kaptcha}"
+                             onclick="this.src='/common/mall/kaptcha?d='+new Date()*1">
+                    </div>
+                </div>
+                <div class="form-group has-feedback"></div>
+                <div class="row">
+                    <div class="col-4">
+                        <a style="color: white" onclick="cancel()" class="btn btn-primary btn-block btn-flat submit">返回
+                        </a>
+                    </div>
+                    <div class="col-4">
+                    </div>
+                    <div class="col-4">
+                        <button type="submit" onclick="login()" class="btn btn-primary btn-block btn-flat submit">登录
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- /.login-card-body -->
+</div>
+<a style="color: #9A9A9A" href="http://beian.miit.gov.cn/">沪ICP备2021010040号</a>
+
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/admin/dist/js/plugins/particles.js}"></script>
+<script th:src="@{/admin/dist/js/plugins/login-bg-particles.js}"></script>
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/admin/dist/js/public.js}"></script>
+<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
+<script type="text/javascript">
+    function cancel(){
+        window.location.href='/index'
+    }
+
+    function login() {
+        var loginName = $("#loginName").val();
+        if (!validPhoneNumber(loginName)) {
+            swal('请输入正确的登录名(即手机号)', {
+                icon: "error",
+            });
+            return false;
+        }
+        var password = $("#password").val();
+        if (!validPassword(password)) {
+            swal('请输入正确的密码格式(6-20位字符和数字组合)', {
+                icon: "error",
+            });
+            return false;
+        }
+        var verifyCode = $("#verifyCode").val();
+        if (!validLength(verifyCode, 5)) {
+            swal('请输入正确的验证码', {
+                icon: "error",
+            });
+            return false;
+        }
+        //验证
+        var params = $("#loginForm").serialize();
+        var url = '/login';
+        $.ajax({
+            type: 'POST',//方法类型
+            url: url,
+            data: params,
+            success: function (result) {
+                if (result.resultCode == 200) {
+                    window.location.href = '/index';
+                } else if (result.resultCode == 199) {
+                    window.location.href = '/recommend?RSuser=' + loginName + '&orderBy=re';
+                } else {
+                    swal(result.message, {
+                        icon: "error",
+                    });
+                }
+                ;
+            },
+            error: function () {
+                swal("操作失败", {
+                    icon: "error",
+                });
+            }
+        });
+    }
+</script>
+</body>
+</html>

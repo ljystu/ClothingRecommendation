@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dhu.rs.dao.RSGoodsMapper">
+    <resultMap id="BaseResultMap" type="dhu.rs.entity.RSGoods">
+        <id column="goods_id" jdbcType="BIGINT" property="goodsId"/>
+        <result column="goods_name" jdbcType="VARCHAR" property="goodsName"/>
+        <result column="goods_category_id" jdbcType="BIGINT" property="goodsCategoryId"/>
+        <result column="goods_cover_img" jdbcType="VARCHAR" property="goodsCoverImg"/>
+        <result column="selling_price" jdbcType="INTEGER" property="sellingPrice"/>
+        <result column="goods_sell_status" jdbcType="TINYINT" property="goodsSellStatus"/>
+        <result column="link" jdbcType="VARCHAR" property="link"/>
+        <result column="stars" jdbcType="DOUBLE" property="stars"/>
+        <result column="reviewnums" jdbcType="INTEGER" property="reviewnums"/>
+        <result column="gender" jdbcType="VARCHAR" property="gender"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        goods_id
+        , goods_name,goods_category_id, goods_cover_img,
+    selling_price, goods_sell_status, link,stars,gender,reviewnums
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from myproduct
+        where goods_id = #{goodsId,jdbcType=BIGINT}
+    </select>
+
+    <update id="batchUpdateSellStatus">
+        update myproduct
+        set goods_sell_status=#{sellStatus} where goods_id in
+        <foreach item="id" collection="orderIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <select id="findRSGoodsList" parameterType="Map" resultMap="BaseResultMap">
+        set sort_buffer_size=1024*1024;
+        select
+        goods_id, goods_name, goods_cover_img,goods_category_id,
+        selling_price, goods_sell_status
+        from myproduct
+        <where>
+            <if test="goodsName!=null and goodsName!=''">
+                and goods_name like CONCAT('%','#{goodsName}','%')
+            </if>
+            <if test="goodsSellStatus!=null and goodsSellStatus!=''">
+                and goods_sell_status = #{goodsSellStatus}
+            </if>
+
+        </where>
+        order by scores desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="findRSGoodsListBySearch" parameterType="Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from myproduct,score
+        <where>
+            <if test="keyword!=null and keyword!=''">
+                and (goods_name like CONCAT('%',#{keyword},'%') )
+            </if>
+            <if test="goodsCategoryId!=null and goodsCategoryId!=''">
+                and goods_category_id = #{goodsCategoryId}
+            </if>
+            <if test="goodsSellStatus!=null">
+                and goods_sell_status = #{goodsSellStatus}
+            </if>
+            <if test="gender!=null">
+                and gender=#{gender}
+            </if>
+            and myproduct.goods_id=score.iid
+        </where>
+        <if test="orderBy!=null and orderBy!=''">
+            <choose>
+                <when test="orderBy=='default'">
+                    order by score desc
+                </when>
+                <when test="orderBy=='re'">
+                    order by rand()
+                </when>
+            </choose>
+        </if>
+        <if test="orderBy==null or orderBy ==''">
+            order by score desc
+        </if>
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="getTotalRSGoodsBySearch" parameterType="Map" resultType="int">
+        select count(*) from myproduct
+        <where>
+            <if test="keyword!=null and keyword!='' and goodsCategoryId==null">
+                and (goods_name like CONCAT('%',#{keyword},'%') )
+            </if>
+            <if test="goodsCategoryId!=null and goodsCategoryId!=''">
+                and goods_category_id = #{goodsCategoryId}
+            </if>
+            <if test="subCategoryId!=null and subCategoryId!=''">
+                or goods_category_id = #{subCategoryId}
+            </if>
+            <if test="goodsSellStatus!=null">
+                and goods_sell_status = #{goodsSellStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="findRSGoodsListByMultipleSearch" parameterType="Map" resultMap="BaseResultMap">
+        set sort_buffer_size=1024*1024;
+
+        select
+        <include refid="Base_Column_List"/>
+        from myproduct,score
+        <where>
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="goodsCategoryId!=null and goodsCategoryId!=''">
+                    goods_category_id = #{goodsCategoryId}
+                </if>
+                <if test="subCategoryId!=null and subCategoryId!=''">
+                    or goods_category_id = #{subCategoryId}
+                </if>
+            </trim>
+            <if test="keyword!=null and keyword!='' and goodsCategoryId==null">
+                and (goods_name like CONCAT('%',#{keyword},'%') )
+            </if>
+            <if test="goodsSellStatus!=null">
+                and goods_sell_status = #{goodsSellStatus}
+            </if>
+            <if test="gender!=null and gender!=''">
+                and gender=#{gender}
+            </if>
+            and goods_id=iid
+            <if test="uid!=null and uid!=''">and uid=#{uid}</if>
+
+        </where>
+
+        <if test="orderBy==null or orderBy ==''">
+            order by overall desc,reviewnums desc
+        </if>
+        <if test="orderBy=='re'">
+            order by rand()
+        </if>
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="findRSGoodsListByMultipleSearchNull" parameterType="Map" resultMap="BaseResultMap">
+        set sort_buffer_size=1024*1024;
+
+        select
+        <include refid="Base_Column_List"/>
+        from myproduct
+        <where>
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="goodsCategoryId!=null and goodsCategoryId!=''">
+                    goods_category_id = #{goodsCategoryId}
+                </if>
+                <if test="subCategoryId!=null and subCategoryId!=''">
+                    or goods_category_id = #{subCategoryId}
+                </if>
+            </trim>
+            <if test="keyword!=null and keyword!='' and goodsCategoryId==null">
+                and (goods_name like CONCAT('%',#{keyword},'%') )
+            </if>
+            <if test="goodsSellStatus!=null">
+                and goods_sell_status = #{goodsSellStatus}
+            </if>
+            <if test="gender!=null and gender!=''">
+                and gender=#{gender}
+            </if>
+        </where>
+
+        <if test="orderBy==null or orderBy ==''">
+            order by scores desc,reviewnums desc
+        </if>
+        <if test="orderBy=='re'">
+            order by rand()
+        </if>
+
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+    <select id="selectByPrimaryKeys" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from myproduct
+        where goods_id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+        order by field(goods_id,
+        <foreach item="id" collection="list" separator=",">
+            #{id}
+        </foreach>
+        );
+    </select>
+    <select id="getTotalRSGoods" parameterType="Map" resultType="int">
+        select count(*) from myproduct
+        <where>
+            <if test="goodsName!=null and goodsName!=''">
+                and goods_name like CONCAT('%','#{goodsName}','%')
+            </if>
+            <if test="goodsSellStatus!=null and goodsSellStatus!=''">
+                and goods_sell_status = #{goodsSellStatus}
+            </if>
+        </where>
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete
+        from myproduct
+        where goods_id = #{goodsId,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="dhu.rs.entity.RSGoods">
+        insert into my (goods_id, goods_name,
+                        goods_cover_img, selling_price,
+                        goods_sell_status)
+        values (#{goodsId,jdbcType=BIGINT}, #{goodsName,jdbcType=VARCHAR},
+                #{goodsCoverImg,jdbcType=VARCHAR}, #{sellingPrice,jdbcType=INTEGER},
+                #{goodsSellStatus,jdbcType=TINYINT},
+    </insert>
+    <insert id="insertSelective" parameterType="dhu.rs.entity.RSGoods">
+        insert into myproduct
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsId != null">
+                goods_id,
+            </if>
+            <if test="goodsName != null">
+                goods_name,
+            </if>
+            <if test="goodsCategoryId != null">
+                goods_category_id,
+            </if>
+            <if test="goodsCoverImg != null">
+                goods_cover_img,
+            </if>
+            <if test="sellingPrice != null">
+                selling_price,
+            </if>
+            <if test="goodsSellStatus != null">
+                goods_sell_status,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsId != null">
+                #{goodsId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsName != null">
+                #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsCategoryId != null">
+                #{goodsCategoryId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsCoverImg != null">
+                #{goodsCoverImg,jdbcType=VARCHAR},
+            </if>
+            <if test="sellingPrice != null">
+                #{sellingPrice,jdbcType=INTEGER},
+            </if>
+            <if test="goodsSellStatus != null">
+                #{goodsSellStatus,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="dhu.rs.entity.RSGoods">
+        update myproduct
+        <set>
+            <if test="goodsName != null">
+                goods_name = #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsCategoryId != null">
+                goods_category_id = #{goodsCategoryId,jdbcType=BIGINT},
+            </if>
+            <if test="goodsCoverImg != null">
+                goods_cover_img = #{goodsCoverImg,jdbcType=VARCHAR},
+            </if>
+            <if test="sellingPrice != null">
+                selling_price = #{sellingPrice,jdbcType=INTEGER},
+            </if>
+            <if test="goodsSellStatus != null">
+                goods_sell_status = #{goodsSellStatus,jdbcType=TINYINT},
+            </if>
+        </set>
+        where goods_id = #{goodsId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="dhu.rs.entity.RSGoods">
+        update myproduct
+        set goods_name        = #{goodsName,jdbcType=VARCHAR},
+            goods_cover_img   = #{goodsCoverImg,jdbcType=VARCHAR},
+            selling_price     = #{sellingPrice,jdbcType=INTEGER},
+            goods_sell_status = #{goodsSellStatus,jdbcType=TINYINT},
+            where goods_id = #{goodsId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="dhu.rs.entity.RSGoods">
+        update myproduct
+        set goods_name        = #{goodsName,jdbcType=VARCHAR},
+            goods_cover_img   = #{goodsCoverImg,jdbcType=VARCHAR},
+            selling_price     = #{sellingPrice,jdbcType=INTEGER},
+            goods_sell_status = #{goodsSellStatus,jdbcType=TINYINT},
+            where goods_id = #{goodsId,jdbcType=BIGINT}
+    </update>
+
+
+    <insert id="Insertsurvey" parameterType="dhu.rs.controller.vo.SurveyVO">
+        insert into quanbushuju(user_name,uid,iid,ratings)
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userID!=null">
+                #{userID},
+            </if>
+            <if test="uid!=null">
+                #{uid},
+            </if>
+            <if test="iid != null">
+                #{iid},
+            </if>
+            <if test="ratings!=null">
+                #{ratings},
+            </if>
+        </trim>
+    </insert>
+</mapper>

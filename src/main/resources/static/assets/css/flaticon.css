@@ -1,0 +1,47 @@
+@font-face {
+    font-family: "flaticon";
+    src: url("../fonts/flaticon.ttf?290de982b5616c777ef34392b26ae250") format("truetype"),
+    url("../fonts/flaticon.woff?290de982b5616c777ef34392b26ae250") format("woff"),
+    url("../fonts/flaticon2.woff2?290de982b5616c777ef34392b26ae250") format("woff2"),
+    url("../fonts/flaticon.eot?290de982b5616c777ef34392b26ae250#iefix") format("embedded-opentype"),
+    url("../fonts/flaticon.svg?290de982b5616c777ef34392b26ae250#flaticon") format("svg");
+}
+
+i[class^="flaticon-"]:before, i[class*=" flaticon-"]:before {
+    font-family: flaticon !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.flaticon-laundry:before {
+    content: "\f101";
+}
+
+.flaticon-placeholder:before {
+    content: "\f102";
+}
+
+.flaticon-shopping-cart:before {
+    content: "\f103";
+}
+
+.flaticon-tie-1:before {
+    content: "\f104";
+}
+
+.flaticon-tie:before {
+    content: "\f105";
+}
+
+.flaticon-tshirt:before {
+    content: "\f106";
+}
+
+.flaticon-wardrobe:before {
+    content: "\f107";
+}

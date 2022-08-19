@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dhu.rs.dao.AdminUserMapper">
+    <resultMap id="BaseResultMap" type="dhu.rs.entity.AdminUser">
+        <id column="admin_user_id" jdbcType="INTEGER" property="adminUserId"/>
+        <result column="login_user_name" jdbcType="VARCHAR" property="loginUserName"/>
+        <result column="login_password" jdbcType="VARCHAR" property="loginPassword"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        admin_user_id
+        , login_user_name, login_password, nick_name
+    </sql>
+
+    <select id="login" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rs_admin_user
+        where login_user_name = #{userName,jdbcType=VARCHAR} AND login_password=#{password,jdbcType=VARCHAR}
+
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rs_admin_user
+        where admin_user_id = #{adminUserId,jdbcType=INTEGER}
+    </select>
+    <insert id="insert" parameterType="dhu.rs.entity.AdminUser">
+        insert into rs_admin_user (admin_user_id, login_user_name, login_password,
+                                   nick_name)
+        values (#{adminUserId,jdbcType=INTEGER}, #{loginUserName,jdbcType=VARCHAR}, #{loginPassword,jdbcType=VARCHAR},
+                #{nickName,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="dhu.rs.entity.AdminUser">
+        insert into rs_admin_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="adminUserId != null">
+                admin_user_id,
+            </if>
+            <if test="loginUserName != null">
+                login_user_name,
+            </if>
+            <if test="loginPassword != null">
+                login_password,
+            </if>
+            <if test="nickName != null">
+                nick_name,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="adminUserId != null">
+                #{adminUserId,jdbcType=INTEGER},
+            </if>
+            <if test="loginUserName != null">
+                #{loginUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="loginPassword != null">
+                #{loginPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null">
+                #{nickName,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="dhu.rs.entity.AdminUser">
+        update rs_admin_user
+        <set>
+            <if test="loginUserName != null">
+                login_user_name = #{loginUserName,jdbcType=VARCHAR},
+            </if>
+            <if test="loginPassword != null">
+                login_password = #{loginPassword,jdbcType=VARCHAR},
+            </if>
+            <if test="nickName != null">
+                nick_name = #{nickName,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where admin_user_id = #{adminUserId,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="dhu.rs.entity.AdminUser">
+        update rs_admin_user
+        set login_user_name = #{loginUserName,jdbcType=VARCHAR},
+            login_password  = #{loginPassword,jdbcType=VARCHAR},
+            nick_name       = #{nickName,jdbcType=VARCHAR}
+        where admin_user_id = #{adminUserId,jdbcType=INTEGER}
+    </update>
+</mapper>

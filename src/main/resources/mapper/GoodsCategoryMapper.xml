@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dhu.rs.dao.GoodsCategoryMapper">
+    <resultMap id="BaseResultMap" type="dhu.rs.entity.GoodsCategory">
+        <id column="category_id" jdbcType="BIGINT" property="categoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+        <result column="category_type" jdbcType="TINYINT" property="categoryType"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        category_id
+        , category_name, is_deleted,category_type
+    </sql>
+    <select id="findGoodsCategoryList" parameterType="Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rs_goods_category
+        <where>
+            is_deleted = 0
+        </where>
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+    <select id="getTotalGoodsCategories" parameterType="Map" resultType="int">
+        select count(*) from rs_goods_category
+        <where>
+            is_deleted = 0
+        </where>
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rs_goods_category
+        where category_id = #{categoryId,jdbcType=BIGINT} and is_deleted=0
+    </select>
+    <select id="selectByName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rs_goods_category
+        where category_name = #{categoryName,jdbcType=VARCHAR}
+        and is_deleted = 0 limit 1
+    </select>
+
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        update rs_goods_category
+        set is_deleted=1
+        where category_id = #{categoryId,jdbcType=BIGINT}
+          and is_deleted = 0
+    </update>
+    <update id="deleteBatch">
+        update rs_goods_category
+        set is_deleted=1 where category_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <insert id="insert" parameterType="dhu.rs.entity.GoodsCategory">
+        insert into rs_goods_category (category_id,
+                                       category_name, is_deleted, category_type)
+        values (#{categoryId,jdbcType=BIGINT},
+                #{categoryName,jdbcType=VARCHAR}, #{isDeleted,jdbcType=TINYINT}, #{categoryType,jdbcType=VARCHAR})
+    </insert>
+    <insert id="insertSelective" parameterType="dhu.rs.entity.GoodsCategory">
+        insert into rs_goods_category(
+        category_id,
+        category_type,
+        category_name,
+        is_deleted
+        )
+
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null">
+                #{categoryId,jdbcType=BIGINT},
+            </if>
+            <if test="categoryType != null">
+                #{categoryType,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryName != null">
+                #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="dhu.rs.entity.GoodsCategory">
+        update rs_goods_category
+        <set>
+            <if test="categoryName != null">
+                category_name = #{categoryName,jdbcType=VARCHAR},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="categoryType != null">
+                category_type = #{categoryType,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where category_id = #{categoryId,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="dhu.rs.entity.GoodsCategory">
+        update rs_goods_category
+        set category_name = #{categoryName,jdbcType=VARCHAR},
+            is_deleted    = #{isDeleted,jdbcType=TINYINT},
+            category_type = #{categoryType,jdbcType=VARCHAR},
+            where category_id = #{categoryId,jdbcType=BIGINT}
+    </update>
+    <select id="selectCategories" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from rs_goods_category
+        where is_deleted = 0
+        <if test="number>0">
+            limit #{number}
+        </if>
+    </select>
+</mapper>
